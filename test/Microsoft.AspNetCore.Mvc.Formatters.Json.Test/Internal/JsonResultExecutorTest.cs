@@ -1,6 +1,7 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System;
 using System.Buffers;
 using System.IO;
 using System.Text;
@@ -156,6 +157,25 @@ namespace Microsoft.AspNetCore.Mvc.Formatters.Json.Internal
             Assert.Equal("application/json; charset=utf-8", context.HttpContext.Response.ContentType);
         }
 
+        [Fact]
+        public async Task ExecuteAsync_ErrorDuringSerialization_DoesNotCloseTheBrackets()
+        {
+            // Arrange
+            var expected = Encoding.UTF8.GetBytes("{\"Name\":\"Robert\"");
+
+            var context = GetActionContext();
+
+            var result = new JsonResult(new ModelWithSerializationError());
+            var executor = CreateExcutor();
+
+            // Act
+            await executor.ExecuteAsync(context, result);
+
+            // Assert
+            var written = GetWrittenBytes(context.HttpContext);
+            Assert.Equal(expected, written);
+        }
+
         private static JsonResultExecutor CreateExcutor()
         {
             return new JsonResultExecutor(
@@ -187,6 +207,18 @@ namespace Microsoft.AspNetCore.Mvc.Formatters.Json.Internal
         {
             context.Response.Body.Seek(0, SeekOrigin.Begin);
             return Assert.IsType<MemoryStream>(context.Response.Body).ToArray();
+        }
+
+        private class ModelWithSerializationError
+        {
+            public string Name { get; } = "Robert";
+            public int Age
+            {
+                get
+                {
+                    throw new NotImplementedException($"Property {Age} has not been implemented");
+                }
+            }
         }
     }
 }
