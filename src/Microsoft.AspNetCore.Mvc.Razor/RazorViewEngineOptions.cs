@@ -31,7 +31,7 @@ namespace Microsoft.AspNetCore.Mvc.Razor
         /// locate Razor files.
         /// </summary>
         /// <remarks>
-        /// At startup, this is initialized to include an instance of <see cref="PhysicalFileProvider"/> that is
+        /// At startup, this is initialized to include an instance of PhysicalFileProvider that is
         /// rooted at the application root.
         /// </remarks>
         public IList<IFileProvider> FileProviders { get; } = new List<IFileProvider>();
