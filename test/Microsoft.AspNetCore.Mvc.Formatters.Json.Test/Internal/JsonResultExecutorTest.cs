@@ -161,7 +161,7 @@ namespace Microsoft.AspNetCore.Mvc.Formatters.Json.Internal
         public async Task ExecuteAsync_ErrorDuringSerialization_DoesNotCloseTheBrackets()
         {
             // Arrange
-            var expected = Encoding.UTF8.GetBytes("{\"Name\":\"Robert\"");
+            var expected = Encoding.UTF8.GetBytes("{\"name\":\"Robert\"");
 
             var context = GetActionContext();
 
@@ -169,7 +169,13 @@ namespace Microsoft.AspNetCore.Mvc.Formatters.Json.Internal
             var executor = CreateExcutor();
 
             // Act
-            await executor.ExecuteAsync(context, result);
+            try
+            {
+                await executor.ExecuteAsync(context, result);
+            }
+            catch
+            {
+            }
 
             // Assert
             var written = GetWrittenBytes(context.HttpContext);

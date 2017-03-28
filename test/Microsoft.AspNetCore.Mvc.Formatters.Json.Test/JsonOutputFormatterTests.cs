@@ -373,7 +373,7 @@ namespace Microsoft.AspNetCore.Mvc.Formatters
         public async Task ErrorDuringSerialization_DoesNotCloseTheBrackets()
         {
             // Arrange
-            var expectedOutput = "{\"Name\":\"Robert\"";
+            var expectedOutput = "{\"name\":\"Robert\"";
             var outputFormatterContext = GetOutputFormatterContext(
                 new ModelWithSerializationError(),
                 typeof(ModelWithSerializationError));
@@ -382,7 +382,13 @@ namespace Microsoft.AspNetCore.Mvc.Formatters
             var jsonFormatter = new JsonOutputFormatter(serializerSettings, ArrayPool<char>.Shared);
 
             // Act
-            await jsonFormatter.WriteResponseBodyAsync(outputFormatterContext, Encoding.UTF8);
+            try
+            {
+                await jsonFormatter.WriteResponseBodyAsync(outputFormatterContext, Encoding.UTF8);
+            }
+            catch
+            {
+            }
 
             // Assert
             var body = outputFormatterContext.HttpContext.Response.Body;
