@@ -216,7 +216,7 @@ namespace Microsoft.AspNetCore.Mvc.Formatters.Json.Internal
             {
                 get
                 {
-                    throw new NotImplementedException($"Property {Age} has not been implemented");
+                    throw new NotImplementedException($"Property {nameof(Age)} has not been implemented");
                 }
             }
         }
